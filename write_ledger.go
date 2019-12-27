@@ -111,7 +111,7 @@ func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, theatreRegNo, releaseDate, value string
 	// var err error
-	fmt.Println("starting add_theatre")
+	fmt.Println("starting add_movies")
 
 	if len(args) < 1 {
 		return shim.Error("Incorrect number of arguments. Expecting Minimum 1. arguments of the variable and value to set")
@@ -161,7 +161,7 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("Failed to add movies : " + errPut.Error())
 	}
 
-	fmt.Println("- end add_theatre")
+	fmt.Println("- end add_movies")
 	return shim.Success(nil)
 }
 

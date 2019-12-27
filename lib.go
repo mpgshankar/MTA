@@ -86,7 +86,7 @@ func sanitize_arguments(strs []string) error {
 // =================================================================================================
 // generic_query - Query records using a (partial) composite key named by first argument
 // =================================================================================================
-func (t *Recon) generic_query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *MTA) generic_query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	fmt.Println("***********Entering generic_query***********")
 	if len(args) < 1 {
@@ -110,7 +110,7 @@ func (t *Recon) generic_query(stub shim.ChaincodeStubInterface, args []string) p
 // =================================================================================================================
 // generic_query_pagination - Query records using a (partial) composite key named by first argument with pagination
 // =================================================================================================================
-func (t *Recon) generic_query_pagination(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *MTA) generic_query_pagination(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	fmt.Println("***********Entering generic_query_pagination***********")
 	if len(args) < 1 {

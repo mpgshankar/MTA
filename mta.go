@@ -26,25 +26,25 @@ import (
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
 
-// Recon Chaincode implementation
-type Recon struct {
+// MTA Chaincode implementation
+type MTA struct {
 }
 
 // ============================================================================================================================
 // Main
 // ============================================================================================================================
 func main() {
-	err := shim.Start(new(Recon))
+	err := shim.Start(new(MTA))
 	if err != nil {
-		fmt.Printf("Error starting Recon chaincode - %s", err)
+		fmt.Printf("Error starting MTA chaincode - %s", err)
 	}
 }
 
 // ============================================================================================================================
-// Init - initialize the chaincode - Recon don’t need anything initlization, so let's run a dead simple test instead
+// Init - initialize the chaincode - MTA don’t need anything initlization, so let's run a dead simple test instead
 // ============================================================================================================================
-func (t *Recon) Init(stub shim.ChaincodeStubInterface) pb.Response {
-	fmt.Println("Recon Is Starting Up")
+func (t *MTA) Init(stub shim.ChaincodeStubInterface) pb.Response {
+	fmt.Println("MTA Is Starting Up")
 	_, args := stub.GetFunctionAndParameters()
 	var Aval int
 	var err error
@@ -78,7 +78,7 @@ func (t *Recon) Init(stub shim.ChaincodeStubInterface) pb.Response {
 // ============================================================================================================================
 // Invoke - Our entry point for Invocations
 // ============================================================================================================================
-func (t *Recon) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *MTA) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	function, args := stub.GetFunctionAndParameters()
 	fmt.Println(" ")
 	fmt.Println("starting invoke, for - " + function)
@@ -96,13 +96,13 @@ func (t *Recon) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return t.Init(stub)
 	} else if function == "read" { //generic read ledger
 		return read(stub, args)
-	} else if function == "generic_query" { //generic_query read from ledger
+	} else if function == "generic_query" { //generic_query read from ledger using couchdb
 		return t.generic_query(stub, args)
-	} else if function == "generic_query_pagination" { //generic_query_pagination read from ledger
+	} else if function == "generic_query_pagination" { //generic_query_pagination read from ledger using couchdb
 		return t.generic_query_pagination(stub, args)
-	} else if function == "getHistory" { //read history of a project (audit)
+	} else if function == "getHistory" { //read history of a key (audit)
 		return getHistory(stub, args)
-	} else if function == "invoke_transaction_insert_update" { //read history of a project (audit)
+	} else if function == "invoke_transaction_insert_update" { //generic insert on ledger
 		return invoke_transaction_insert_update(stub, args)
 	}
 
@@ -114,6 +114,6 @@ func (t *Recon) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 // ============================================================================================================================
 // Query - legacy function
 // ============================================================================================================================
-func (t *Recon) Query(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *MTA) Query(stub shim.ChaincodeStubInterface) pb.Response {
 	return shim.Error("Unknown supported call - Query()")
 }

@@ -26,44 +26,14 @@ import (
 )
 
 // ============================================================================================================================
-// write() - genric write variable into ledger
+// invoke_transaction_insert_update() - genric insert json object into ledger
 //
 // Shows Off PutState() - writting a key/value into the ledger
 //
 // Inputs - Array of strings
-//    0   ,    1
-//   key  ,  value
-//  "abc" , "test"
-// ============================================================================================================================
-// func write(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-// 	var key, value string
-// 	// var err error
-// 	fmt.Println("starting write")
-
-// 	if len(args) != 3 {
-// 		return shim.Error("Incorrect number of arguments. Expecting 2. key of the variable and value to set")
-// 	}
-
-// 	key = args[1] //rename for funsies
-// 	value = args[2]
-// 	errPut := stub.PutState(key, []byte(value)) //write the variable into the ledger
-// 	if errPut != nil {
-// 		return shim.Error("Failed to put state : " + errPut.Error())
-// 	}
-
-// 	fmt.Println("- end write")
-// 	return shim.Success(nil)
-// }
-
-// ============================================================================================================================
-// write() - genric write variable into ledger
-//
-// Shows Off PutState() - writting a key/value into the ledger
-//
-// Inputs - Array of strings
-//    0   ,    1
-//   key  ,  value
-//  "abc" , "test"
+//    0
+//   json_object
+//  {"key1":"value1","key2":"value2","key3":"value3"}
 // ============================================================================================================================
 func invoke_transaction_insert_update(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, value string

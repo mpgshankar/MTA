@@ -205,10 +205,12 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(nil)
 }
 
+//Check Whether Current Date greater than or equal to Relase Date
 func greaterThanEqualCurrentDate(start, check time.Time) bool {
 	return start.After(check) || start.Equal(check)
 }
 
+//Check Whether Current Date equal to Relase Date
 func equalCurrentDate(start, check time.Time) bool {
 	return start.Equal(check)
 }

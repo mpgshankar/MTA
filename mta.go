@@ -53,10 +53,11 @@ type Movies struct {
 }
 
 type Shows struct {
-	ShowTiming    string `json:showTiming`
-	TotalSeat     int    `json:totalSeat`
-	AvailableSeat int    `json:availableSeat`
-	BookedSeat    int    `json:bookedSeat`
+	ShowTiming     string `json:showTiming`
+	TotalSeat      int    `json:totalSeat`
+	AvailableSeat  int    `json:availableSeat`
+	BookedSeat     int    `json:bookedSeat`
+	PricePerTicket int    `json:pricePerTicket`
 }
 
 type Tickets struct {

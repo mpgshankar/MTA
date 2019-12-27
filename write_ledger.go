@@ -20,6 +20,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -151,6 +152,11 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		shw.TotalSeat = 100
 		shw.AvailableSeat = 100
 		shw.BookedSeat = 0
+		if strings.HasSuffix(shTm, "am") {
+			shw.PricePerTicket = 100
+		} else {
+			shw.PricePerTicket = 180
+		}
 		mov.ShowTimings = append(mov.ShowTimings, shw)
 	}
 

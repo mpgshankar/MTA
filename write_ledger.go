@@ -66,10 +66,10 @@ func invoke_transaction_insert_update(stub shim.ChaincodeStubInterface, args []s
 //
 // Shows Off PutState() - writting a key/value into the ledger
 //
-// Inputs - Array of strings
+// Inputs - JSON Object
 //    0
 //   json_object
-//  {"key1":"value1","key2":"value2","key3":"value3"}
+//  {"theatreRegNo":"value1","theatreLocation":"value2"}
 // ============================================================================================================================
 func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, value string
@@ -84,13 +84,52 @@ func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	value = args[0]
 	var jsonValue map[string]interface{}
 	json.Unmarshal([]byte(value), &jsonValue)
-	key, _ = jsonValue["transactionGroupId"].(string)
+	key, _ = jsonValue["theatreRegNo"].(string)
 
 	valueAsBytes, _ := json.Marshal(jsonValue)
 
-	errPut := stub.PutState(key, valueAsBytes) //write the transaction into the ledger
+	errPut := stub.PutState(key, valueAsBytes) //write the theatre details into the ledger
 	if errPut != nil {
-		return shim.Error("Failed to put state : " + errPut.Error())
+		return shim.Error("Failed to add theatre : " + errPut.Error())
+	}
+
+	fmt.Println("- end add_theatre")
+	return shim.Success(nil)
+}
+
+// ============================================================================================================================
+// add_movies() - add movie into ledger
+//
+// Shows Off PutState() - writting a key/value into the ledger
+//
+// Inputs - JSON Object
+//    0
+//   json_object
+//  {"theatreRegNo":"value1","theatreLocation":"value2"}
+// ============================================================================================================================
+func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var key, theatreRegNo, value string
+	// var err error
+	fmt.Println("starting add_theatre")
+
+	if len(args) < 1 {
+		return shim.Error("Incorrect number of arguments. Expecting Minimum 1. arguments of the variable and value to set")
+	}
+
+	// value = strings.Replace(args[0], "\"", "", -1) //rename for funsies
+	value = args[0]
+	var jsonValue map[string]interface{}
+	json.Unmarshal([]byte(value), &jsonValue)
+	key, _ = jsonValue["movieId"].(string)
+	theatreRegNo, _ = jsonValue["theatreRegNo"].(string)
+
+	theatre, err := stub.GetState(theatreRegNo)
+
+	valueAsBytes, _ := json.Marshal(jsonValue)
+
+	errPut := stub.PutState(key, valueAsBytes) //write the theatre details into the ledger
+	if errPut != nil {
+		return shim.Error("Failed to add theatre : " + errPut.Error())
 	}
 
 	fmt.Println("- end add_theatre")

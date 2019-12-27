@@ -30,6 +30,24 @@ import (
 type MTA struct {
 }
 
+// Theatre Struct
+type Theatre struct {
+	ObjectType      string   `json:"docType"` // field defined for couchdb
+	TheatreName     string   `json:"theatreName"`
+	TheatreLocation string   `json:"theatreLocation"`
+	MovieDuration   string   `json:"movieDuration"`
+	MovieTimings    []string `json:"movieTimings"`
+}
+
+// Movie Struct
+type Movie struct {
+	ObjectType       string   `json:"docType"` // field defined for couchdb
+	MovieName        string   `json:"movieName"`
+	MovieReleaseDate string   `json:"movieReleaseDate"`
+	MovieDuration    string   `json:"movieDuration"`
+	MovieTimings     []string `json:"movieTimings"`
+}
+
 // ============================================================================================================================
 // Main
 // ============================================================================================================================

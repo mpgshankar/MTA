@@ -20,6 +20,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
@@ -108,7 +109,7 @@ func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 //  {"theatreRegNo":"value1","theatreLocation":"value2"}
 // ============================================================================================================================
 func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var key, theatreRegNo, value string
+	var key, theatreRegNo, releaseDate, value string
 	// var err error
 	fmt.Println("starting add_theatre")
 
@@ -118,20 +119,56 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// value = strings.Replace(args[0], "\"", "", -1) //rename for funsies
 	value = args[0]
-	var jsonValue map[string]interface{}
-	json.Unmarshal([]byte(value), &jsonValue)
-	key, _ = jsonValue["movieId"].(string)
-	theatreRegNo, _ = jsonValue["theatreRegNo"].(string)
+	var mov Movies
+	json.Unmarshal([]byte(value), &mov)
+	key = mov.MovieId
+	theatreRegNo = mov.TheatreRegNo
+	releaseDate = mov.MovieReleaseDate
+	// key, _ = jsonValue["movieId"].(string)
+	// theatreRegNo, _ = jsonValue["theatreRegNo"].(string)
+	// releaseDate, _ = jsonValue["MovieReleaseDate"].(string)
 
-	theatre, err := stub.GetState(theatreRegNo)
+	release, _ := time.Parse(time.RFC822, "2006-01-02")
 
-	valueAsBytes, _ := json.Marshal(jsonValue)
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	currentDate := time.Now().In(loc)
+	format := "2006-01-02"
+	curDate, _ := time.Parse(format, currentDate.Format("2006-01-02"))
+
+	//check if theatre exists or not
+	theatreAsBytes, err := stub.GetState(theatreRegNo)
+	if err != nil {
+		fmt.Println("This theatre does not exists - " + theatreRegNo)
+		return shim.Error("This theatre does not exists - " + theatreRegNo)
+	}
+	theatre := Theatre{}
+	json.Unmarshal(theatreAsBytes, &theatre) //un stringify it aka JSON.parse()
+
+	// check movies when it will be releasing
+
+	if greaterThanEqualCurrentDate(release, curDate) {
+		if equalCurrentDate(release, curDate) {
+			theatre.MoviesRunning = append(theatre.MoviesRunning, mov)
+		} else {
+			theatre.MoviesComingSoon = append(theatre.MoviesComingSoon, mov)
+		}
+	}
+
+	valueAsBytes, _ := json.Marshal(mov)
 
 	errPut := stub.PutState(key, valueAsBytes) //write the theatre details into the ledger
 	if errPut != nil {
-		return shim.Error("Failed to add theatre : " + errPut.Error())
+		return shim.Error("Failed to add movies : " + errPut.Error())
 	}
 
 	fmt.Println("- end add_theatre")
 	return shim.Success(nil)
+}
+
+func greaterThanEqualCurrentDate(start, check time.Time) bool {
+	return check.After(start) || check.Equal(start)
+}
+
+func equalCurrentDate(start, check time.Time) bool {
+	return check.Equal(start)
 }

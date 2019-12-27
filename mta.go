@@ -48,8 +48,8 @@ type Movies struct {
 	MovieReleaseDate string   `json:"movieReleaseDate"`
 	MovieDuration    string   `json:"movieDuration"`
 	ShowTimings      []string `json:"showTimings"`
-	Status           []string `json:"status"`
 	TheatreRegNo     string   `json:"theatreRegNo"`
+	Status           []string `json:"status"`
 }
 
 // ============================================================================================================================

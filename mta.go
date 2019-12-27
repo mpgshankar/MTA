@@ -105,14 +105,6 @@ func (t *MTA) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println(" ")
 	fmt.Println("starting invoke, for - " + function)
 
-	// if function != "invoke" {
-	// 	return shim.Error("Unknown function call")
-	// }
-
-	// if len(args) < 2 {
-	// 	return shim.Error("Incorrect number of arguments. Expecting at least 2")
-	// }
-
 	// Handle different functions
 	if function == "init" { //initialize the chaincode state, used as reset
 		return t.Init(stub)
@@ -126,9 +118,9 @@ func (t *MTA) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return getHistory(stub, args)
 	} else if function == "invoke_transaction_insert_update" { //generic insert on ledger
 		return invoke_transaction_insert_update(stub, args)
-	} else if function == "add_theatre" { //generic insert on ledger
+	} else if function == "add_theatre" { //add theatre details on ledger
 		return add_theatre(stub, args)
-	} else if function == "add_movies" { //generic insert on ledger
+	} else if function == "add_movies" { //add movie details on ledger
 		return add_movies(stub, args)
 	}
 

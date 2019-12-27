@@ -113,6 +113,12 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// var err error
 	fmt.Println("starting add_movies")
 
+	certname, err := get_cert(stub)
+	if err != nil {
+		fmt.Printf("INVOKE: Error retrieving cert: %s", err)
+		return shim.Error("Error retrieving cert")
+	}
+
 	if len(args) < 1 {
 		return shim.Error("Incorrect number of arguments. Expecting Minimum 1. arguments of the variable and value to set")
 	}
@@ -122,17 +128,30 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var jsonValue map[string]interface{}
 	json.Unmarshal([]byte(value), &jsonValue)
 	key, _ = jsonValue["movieId"].(string)
-	theatreRegNo, _ = jsonValue["theatreRegNo"].(string)
+	theatreRegNo = string(certname)
+	movieName, _ := jsonValue["movieName"].(string)
+	movieDuration, _ := jsonValue["movieDuration"].(string)
 	releaseDate, _ = jsonValue["movieReleaseDate"].(string)
 	showTimings, _ := jsonValue["showTimings"].([]interface{})
 
+	// Create Movie Object
 	var mov Movies
 	mov.ObjectType = "Movies"
+	mov.MovieId = key
+	mov.MovieName = movieName
+	mov.MovieDuration = movieDuration
+	mov.MovieReleaseDate = releaseDate
 
 	// Add Show Timings in Movie Struct
 
 	for _, show := range showTimings {
-		fmt.Println(show)
+		shTm, _ := show.(string)
+		var shw Shows
+		shw.ShowTiming = shTm
+		shw.TotalSeat = 100
+		shw.AvailableSeat = 100
+		shw.BookedSeat = 0
+		mov.ShowTimings = append(mov.ShowTimings, shw)
 	}
 
 	// Get Current Date Time
@@ -155,8 +174,10 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if greaterThanEqualCurrentDate(release, curDate) {
 		if equalCurrentDate(release, curDate) {
 			theatre.MoviesRunning = append(theatre.MoviesRunning, mov)
+			mov.Status = "Running"
 		} else {
 			theatre.MoviesComingSoon = append(theatre.MoviesComingSoon, mov)
+			mov.Status = "Coming Soon"
 		}
 	}
 

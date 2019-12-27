@@ -128,16 +128,15 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// theatreRegNo, _ = jsonValue["theatreRegNo"].(string)
 	// releaseDate, _ = jsonValue["MovieReleaseDate"].(string)
 
-	release, _ := time.Parse(time.RFC822, "2006-01-02")
-
 	loc, _ := time.LoadLocation("Asia/Kolkata")
 	currentDate := time.Now().In(loc)
 	format := "2006-01-02"
 	curDate, _ := time.Parse(format, currentDate.Format("2006-01-02"))
+	release, _ := time.Parse(format, releaseDate)
 
 	//check if theatre exists or not
-	theatreAsBytes, err := stub.GetState(theatreRegNo)
-	if err != nil {
+	theatreAsBytes, _ := stub.GetState(theatreRegNo)
+	if theatreAsBytes == nil {
 		fmt.Println("This theatre does not exists - " + theatreRegNo)
 		return shim.Error("This theatre does not exists - " + theatreRegNo)
 	}

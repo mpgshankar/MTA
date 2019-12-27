@@ -30,7 +30,7 @@ import (
 //
 // Shows Off PutState() - writting a key/value into the ledger
 //
-// Inputs - Array of strings
+// Inputs - JSON Object
 //    0
 //   json_object
 //  {"key1":"value1","key2":"value2","key3":"value3"}
@@ -58,5 +58,41 @@ func invoke_transaction_insert_update(stub shim.ChaincodeStubInterface, args []s
 	}
 
 	fmt.Println("- end invoke_transaction_insert_update")
+	return shim.Success(nil)
+}
+
+// ============================================================================================================================
+// add_theatre() - add theatre into ledger
+//
+// Shows Off PutState() - writting a key/value into the ledger
+//
+// Inputs - Array of strings
+//    0
+//   json_object
+//  {"key1":"value1","key2":"value2","key3":"value3"}
+// ============================================================================================================================
+func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var key, value string
+	// var err error
+	fmt.Println("starting add_theatre")
+
+	if len(args) < 1 {
+		return shim.Error("Incorrect number of arguments. Expecting Minimum 1. arguments of the variable and value to set")
+	}
+
+	// value = strings.Replace(args[0], "\"", "", -1) //rename for funsies
+	value = args[0]
+	var jsonValue map[string]interface{}
+	json.Unmarshal([]byte(value), &jsonValue)
+	key, _ = jsonValue["transactionGroupId"].(string)
+
+	valueAsBytes, _ := json.Marshal(jsonValue)
+
+	errPut := stub.PutState(key, valueAsBytes) //write the transaction into the ledger
+	if errPut != nil {
+		return shim.Error("Failed to put state : " + errPut.Error())
+	}
+
+	fmt.Println("- end add_theatre")
 	return shim.Success(nil)
 }

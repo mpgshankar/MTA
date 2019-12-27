@@ -32,20 +32,23 @@ type MTA struct {
 
 // Theatre Struct
 type Theatre struct {
-	ObjectType      string   `json:"docType"` // field defined for couchdb
-	TheatreName     string   `json:"theatreName"`
-	TheatreLocation string   `json:"theatreLocation"`
-	MovieDuration   string   `json:"movieDuration"`
-	MovieTimings    []string `json:"movieTimings"`
+	ObjectType       string   `json:"docType"` // field defined for couchdb
+	TheatreRegNo     string   `json:"theatreRegNo"`
+	TheatreName      string   `json:"theatreName"`
+	TheatreLocation  string   `json:"theatreLocation"`
+	MoviesRunning    []Movies `json:"moviesRunning"`
+	MoviesComingSoon []Movies `json:"moviesComingSoon"`
 }
 
-// Movie Struct
-type Movie struct {
+// Movies Struct
+type Movies struct {
 	ObjectType       string   `json:"docType"` // field defined for couchdb
 	MovieName        string   `json:"movieName"`
 	MovieReleaseDate string   `json:"movieReleaseDate"`
 	MovieDuration    string   `json:"movieDuration"`
-	MovieTimings     []string `json:"movieTimings"`
+	ShowTimings      []string `json:"showTimings"`
+	Status           []string `json:"status"`
+	Theatre
 }
 
 // ============================================================================================================================
@@ -122,6 +125,10 @@ func (t *MTA) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return getHistory(stub, args)
 	} else if function == "invoke_transaction_insert_update" { //generic insert on ledger
 		return invoke_transaction_insert_update(stub, args)
+	} else if function == "add_theatre" { //generic insert on ledger
+		return add_theatre(stub, args)
+	} else if function == "add_movies" { //generic insert on ledger
+		return add_movies(stub, args)
 	}
 
 	// error out

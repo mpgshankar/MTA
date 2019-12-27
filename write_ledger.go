@@ -142,7 +142,7 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	mov.MovieName = movieName
 	mov.MovieDuration = movieDuration
 	mov.MovieReleaseDate = releaseDate
-
+	mov.TheatreRegNo = theatreRegNo
 	// Add Show Timings in Movie Struct
 
 	for _, show := range showTimings {

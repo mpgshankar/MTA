@@ -173,11 +173,11 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	// check movies when it will be releasing
 	if greaterThanEqualCurrentDate(release, curDate) {
 		if equalCurrentDate(release, curDate) {
-			theatre.MoviesRunning = append(theatre.MoviesRunning, mov)
 			mov.Status = "Running"
+			theatre.MoviesRunning = append(theatre.MoviesRunning, mov)
 		} else {
-			theatre.MoviesComingSoon = append(theatre.MoviesComingSoon, mov)
 			mov.Status = "Coming Soon"
+			theatre.MoviesComingSoon = append(theatre.MoviesComingSoon, mov)
 		}
 	}
 

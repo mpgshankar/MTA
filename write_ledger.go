@@ -133,7 +133,8 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	format := "2006-01-02"
 	curDate, _ := time.Parse(format, currentDate.Format("2006-01-02"))
 	release, _ := time.Parse(format, releaseDate)
-
+	fmt.Println(curDate)
+	fmt.Println(release)
 	//check if theatre exists or not
 	theatreAsBytes, _ := stub.GetState(theatreRegNo)
 	if theatreAsBytes == nil {
@@ -144,6 +145,8 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	json.Unmarshal(theatreAsBytes, &theatre) //un stringify it aka JSON.parse()
 
 	// check movies when it will be releasing
+	fmt.Println(greaterThanEqualCurrentDate(release, curDate))
+	fmt.Println(equalCurrentDate(release, curDate))
 
 	if greaterThanEqualCurrentDate(release, curDate) {
 		if equalCurrentDate(release, curDate) {
@@ -153,9 +156,16 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		}
 	}
 
+	trAsBytes, _ := json.Marshal(theatre)
+
+	errTr := stub.PutState(theatreRegNo, trAsBytes) // update the theatre details into the ledger
+	if errTr != nil {
+		return shim.Error("Failed to add movies : " + errTr.Error())
+	}
+
 	valueAsBytes, _ := json.Marshal(mov)
 
-	errPut := stub.PutState(key, valueAsBytes) //write the theatre details into the ledger
+	errPut := stub.PutState(key, valueAsBytes) //write the movie details into the ledger
 	if errPut != nil {
 		return shim.Error("Failed to add movies : " + errPut.Error())
 	}
@@ -165,9 +175,9 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 }
 
 func greaterThanEqualCurrentDate(start, check time.Time) bool {
-	return check.After(start) || check.Equal(start)
+	return start.After(check) || start.Equal(check)
 }
 
 func equalCurrentDate(start, check time.Time) bool {
-	return check.Equal(start)
+	return start.Equal(check)
 }

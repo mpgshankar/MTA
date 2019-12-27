@@ -47,9 +47,21 @@ type Movies struct {
 	MovieName        string   `json:"movieName"`
 	MovieReleaseDate string   `json:"movieReleaseDate"`
 	MovieDuration    string   `json:"movieDuration"`
-	ShowTimings      []string `json:"showTimings"`
+	ShowTimings      []Shows  `json:"showTimings"`
 	TheatreRegNo     string   `json:"theatreRegNo"`
 	Status           []string `json:"status"`
+}
+
+type Shows struct {
+	ShowTiming    string `json:showTiming`
+	TotalSeat     int    `json:totalSeat`
+	AvailableSeat int    `json:availableSeat`
+	BookedSeat    int    `json:bookedSeat`
+}
+
+type Tickets struct {
+	ObjectType string `json:"docType"` // field defined for couchdb
+	TicketId   string `json:"ticketId"`
 }
 
 // ============================================================================================================================
@@ -121,6 +133,8 @@ func (t *MTA) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	} else if function == "add_theatre" { //add theatre details on ledger
 		return add_theatre(stub, args)
 	} else if function == "add_movies" { //add movie details on ledger
+		return add_movies(stub, args)
+	} else if function == "book_tickets" { //book movie tickets
 		return add_movies(stub, args)
 	}
 

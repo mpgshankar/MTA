@@ -119,22 +119,29 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// value = strings.Replace(args[0], "\"", "", -1) //rename for funsies
 	value = args[0]
-	var mov Movies
-	json.Unmarshal([]byte(value), &mov)
-	key = mov.MovieId
-	theatreRegNo = mov.TheatreRegNo
-	releaseDate = mov.MovieReleaseDate
-	// key, _ = jsonValue["movieId"].(string)
-	// theatreRegNo, _ = jsonValue["theatreRegNo"].(string)
-	// releaseDate, _ = jsonValue["MovieReleaseDate"].(string)
+	var jsonValue map[string]interface{}
+	json.Unmarshal([]byte(value), &jsonValue)
+	key, _ = jsonValue["movieId"].(string)
+	theatreRegNo, _ = jsonValue["theatreRegNo"].(string)
+	releaseDate, _ = jsonValue["movieReleaseDate"].(string)
+	showTimings, _ := jsonValue["showTimings"].([]interface{})
 
+	var mov Movies
+	mov.ObjectType = "Movies"
+
+	// Add Show Timings in Movie Struct
+
+	for _, show := range showTimings {
+		fmt.Println(show)
+	}
+
+	// Get Current Date Time
 	loc, _ := time.LoadLocation("Asia/Kolkata")
 	currentDate := time.Now().In(loc)
 	format := "2006-01-02"
 	curDate, _ := time.Parse(format, currentDate.Format("2006-01-02"))
 	release, _ := time.Parse(format, releaseDate)
-	fmt.Println(curDate)
-	fmt.Println(release)
+
 	//check if theatre exists or not
 	theatreAsBytes, _ := stub.GetState(theatreRegNo)
 	if theatreAsBytes == nil {
@@ -145,9 +152,6 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	json.Unmarshal(theatreAsBytes, &theatre) //un stringify it aka JSON.parse()
 
 	// check movies when it will be releasing
-	fmt.Println(greaterThanEqualCurrentDate(release, curDate))
-	fmt.Println(equalCurrentDate(release, curDate))
-
 	if greaterThanEqualCurrentDate(release, curDate) {
 		if equalCurrentDate(release, curDate) {
 			theatre.MoviesRunning = append(theatre.MoviesRunning, mov)

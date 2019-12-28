@@ -241,10 +241,8 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if screenNumber == 0 {
 		fmt.Println("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
 		return shim.Error("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
-	} else {
-		show.ScreenNumber = screenNumber
 	}
-	fmt.Println(show)
+	show.ScreenNumber = screenNumber
 	showAsBytes, _ := json.Marshal(show)
 
 	errShw := stub.PutState(show.ShowId, showAsBytes) // update the theatre details into the ledger

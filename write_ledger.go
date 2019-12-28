@@ -310,20 +310,16 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	value = args[0]
 	var ticket Tickets
 	json.Unmarshal([]byte(value), &ticket)
-	fmt.Println(ticket.ShowId)
-	// queryFrm := `{"selector":{"docType":"Shows", "showId":"` + ticket.ShowId + `"}}`
-	// queryString := fmt.Sprintf(queryFrm)
-	// queryResults, _ := getQueryResultForQueryString(stub, queryString)
 	shAsBytes, _ := stub.GetState(ticket.ShowId)
 	show := Shows{}
 	json.Unmarshal(shAsBytes, &show)
-	fmt.Println(show)
 	if show.AvailableSeat == 0 {
 		return shim.Error("Failed to book tickets for show as no seats are available.")
 	} else if ticket.NumberOfTickets <= show.AvailableSeat {
 		movieAsBytes, _ := stub.GetState(show.MovieId)
 		mov := Movies{}
 		json.Unmarshal(movieAsBytes, &mov)
+		ticket.ObjectType = "Tickets"
 		ticket.TicketId = "T" + show.TheatreRegNo + show.ShowId + strconv.Itoa(rand.Intn(1000000))
 		ticket.MovieName = mov.MovieName
 		ticket.ShowTiming = show.ShowTiming

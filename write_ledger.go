@@ -310,14 +310,14 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	value = args[0]
 	var ticket Tickets
 	json.Unmarshal([]byte(value), &ticket)
-
-	queryFrm := `{"selector":{"docType":"Shows", "showId":"` + ticket.ShowId + `"}}`
-	queryString := fmt.Sprintf(queryFrm)
-	queryResults, _ := getQueryResultForQueryString(stub, queryString)
-
+	fmt.Println(ticket.ShowId)
+	// queryFrm := `{"selector":{"docType":"Shows", "showId":"` + ticket.ShowId + `"}}`
+	// queryString := fmt.Sprintf(queryFrm)
+	// queryResults, _ := getQueryResultForQueryString(stub, queryString)
+	shAsBytes, _ := stub.GetState(ticket.ShowId)
 	show := Shows{}
-	json.Unmarshal(queryResults, &show)
-
+	json.Unmarshal(shAsBytes, &show)
+	fmt.Println(show)
 	if show.AvailableSeat == 0 {
 		return shim.Error("Failed to book tickets for show as no seats are available.")
 	} else if ticket.NumberOfTickets <= show.AvailableSeat {

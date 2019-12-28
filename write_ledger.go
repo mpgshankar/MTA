@@ -217,6 +217,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	show.BookedSeat = 0
 	show.ShowStatus = "Running"
 	show.TheatreRegNo = theatreRegNo
+	show.ShowDate = show.ShowTiming[:10]
 	if strings.HasSuffix(show.ShowTiming, "am") {
 		show.PricePerTicket = 100
 	} else {
@@ -237,7 +238,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("You cannot add a show for a movie which is not running in - " + theatreRegNo)
 	}
 
-	screenNumber := screenAvailable(ttr.NumberOfScreens, show.ShowTiming, show.MovieId, stub)
+	screenNumber := screenAvailable(ttr.NumberOfScreens, show.ShowTiming, show.ShowDate, show.MovieId, stub)
 	if screenNumber == 0 {
 		fmt.Println("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
 		return shim.Error("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
@@ -346,15 +347,14 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 }
 
 //Check Whether Current Date greater than or equal to Relase Date
-func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shim.ChaincodeStubInterface) int {
-	queryFrm := `{"selector":{"docType":"Shows", "showTiming":"` + showTiming + `"}}`
+func screenAvailable(noOfScreen int, showTiming string, showDate string, movieId string, stub shim.ChaincodeStubInterface) int {
+	queryFrm := `{"selector":{"docType":"Shows", "showDate":"` + showDate + `"}}`
 	queryString := fmt.Sprintf(queryFrm)
 	var screenNumber int
 	var arrayOfScreensUsed []int
 	var totalScreens []int
 	var unique []int
 	showsPerDay := 0
-	checkDayBasedShow := showTiming[:10]
 	fmt.Println(checkDayBasedShow)
 	for i := 1; i <= noOfScreen; i++ {
 		totalScreens = append(totalScreens, i)
@@ -367,8 +367,8 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 		for _, eachShow := range arrayOfShows {
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)
 			fmt.Println("eachShow.ShowTiming[:10] ====> ")
-			fmt.Println(eachShow.ShowTiming[:10])
-			if checkDayBasedShow == eachShow.ShowTiming[:10] && movieId == eachShow.MovieId {
+			fmt.Println(eachShow.ShowDate)
+			if showDate == eachShow.ShowDate && movieId == eachShow.MovieId {
 				showsPerDay += 1
 			}
 			if eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming {

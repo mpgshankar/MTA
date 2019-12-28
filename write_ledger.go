@@ -356,26 +356,11 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 		totalScreens = append(totalScreens, i)
 	}
 
-	fmt.Println("========= screenAvailable start =========")
-	fmt.Println(movieId)
-	fmt.Println(showTiming)
 	queryResults, _ := getQueryResultForQueryString(stub, queryString)
-	fmt.Println(queryResults)
 	var arrayOfShows []Shows
-	json.Unmarshal(queryResults, &arrayOfShows)
-	// fmt.Println(len(arrayOfShows))
 	if len(arrayOfShows) > 0 {
 		for _, eachShow := range arrayOfShows {
-			// show := Shows{}
-
-			fmt.Println("eachShow =======> ")
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)
-			fmt.Println(arrayOfScreensUsed)
-			fmt.Println(eachShow.MovieId)
-			fmt.Println(eachShow.ShowTiming)
-			fmt.Println(eachShow.MovieId == movieId)
-			fmt.Println(eachShow.ShowTiming == showTiming)
-			fmt.Println(eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming)
 			if eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming {
 				return 0
 			}
@@ -384,8 +369,6 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 			return 0
 		} else {
 			unique = Difference(totalScreens, arrayOfScreensUsed)
-			fmt.Println("unique ====> ")
-			fmt.Println(unique)
 			for _, val := range unique {
 				return val
 			}
@@ -393,9 +376,6 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 	} else {
 		screenNumber = 1
 	}
-	fmt.Println(screenNumber)
-	fmt.Println("========= screenAvailable end =========")
-
 	return screenNumber
 }
 

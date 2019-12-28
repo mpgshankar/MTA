@@ -238,8 +238,8 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	screenNumber := screenAvailable(ttr.NumberOfScreens, show.ShowTiming, show.MovieId, stub)
 	if screenNumber == 0 {
-		fmt.Println("All the screens are full for this show timing. Please select different time for show")
-		return shim.Error("All the screens are full for this show timing. Please select different time for show")
+		fmt.Println("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
+		return shim.Error("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
 	} else {
 		show.ScreenNumber = screenNumber
 	}

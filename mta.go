@@ -51,6 +51,7 @@ type Movies struct {
 }
 
 type Shows struct {
+	ObjectType     string `json:"docType"` // field defined for couchdb
 	ShowId         string `json:"showId"`
 	ShowTiming     string `json:"showTiming"`
 	TheatreRegNo   string `json:"theatreRegNo"`

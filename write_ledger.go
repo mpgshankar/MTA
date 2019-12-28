@@ -211,6 +211,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	value = args[0]
 	var show Shows
 	json.Unmarshal([]byte(value), &show)
+	// show.ObjectType = "Shows"
 	show.TotalSeat = 100
 	show.AvailableSeat = 100
 	show.BookedSeat = 0

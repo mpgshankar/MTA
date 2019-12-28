@@ -32,37 +32,46 @@ type MTA struct {
 
 // Theatre Struct
 type Theatre struct {
-	ObjectType       string   `json:"docType"` // field defined for couchdb
-	TheatreRegNo     string   `json:"theatreRegNo"`
-	TheatreName      string   `json:"theatreName"`
-	TheatreLocation  string   `json:"theatreLocation"`
-	MoviesRunning    []Movies `json:"moviesRunning"`
-	MoviesComingSoon []Movies `json:"moviesComingSoon"`
+	ObjectType      string   `json:"docType"` // field defined for couchdb
+	TheatreRegNo    string   `json:"theatreRegNo"`
+	TheatreName     string   `json:"theatreName"`
+	TheatreLocation string   `json:"theatreLocation"`
+	MoviesRunning   []Movies `json:"moviesRunning"`
+	// MoviesComingSoon []Movies `json:"moviesComingSoon"`
+	NumberOfScreens int `json:"numberOfScreens"`
 }
 
 // Movies Struct
 type Movies struct {
-	ObjectType       string  `json:"docType"` // field defined for couchdb
-	MovieId          string  `json:"movieId"`
-	MovieName        string  `json:"movieName"`
-	MovieReleaseDate string  `json:"movieReleaseDate"`
-	MovieDuration    string  `json:"movieDuration"`
-	ShowTimings      []Shows `json:"showTimings"`
-	TheatreRegNo     string  `json:"theatreRegNo"`
-	Status           string  `json:"status"`
+	ObjectType   string `json:"docType"` // field defined for couchdb
+	MovieId      string `json:"movieId"`
+	MovieName    string `json:"movieName"`
+	TheatreRegNo string `json:"theatreRegNo"`
+	Status       string `json:"status"`
 }
 
 type Shows struct {
-	ShowTiming     string `json:showTiming`
-	TotalSeat      int    `json:totalSeat`
-	AvailableSeat  int    `json:availableSeat`
-	BookedSeat     int    `json:bookedSeat`
-	PricePerTicket int    `json:pricePerTicket`
+	ShowId         string `json:"showId"`
+	ShowTiming     string `json:"showTiming"`
+	TheatreRegNo   string `json:"theatreRegNo"`
+	MovieId        string `json:"movieId"`
+	TotalSeat      int    `json:"totalSeat"`
+	AvailableSeat  int    `json:"availableSeat"`
+	BookedSeat     int    `json:"bookedSeat"`
+	PricePerTicket int    `json:"pricePerTicket"`
+	ShowStatus     string `json:"showStatus"`
+	ScreenNumber   int    `json:"screenNumber"`
 }
 
 type Tickets struct {
-	ObjectType string `json:"docType"` // field defined for couchdb
-	TicketId   string `json:"ticketId"`
+	ObjectType      string `json:"docType"` // field defined for couchdb
+	WindowId        string `json:"windowId"`
+	TicketId        string `json:"ticketId"`
+	MovieId         string `json:"movieId"`
+	MovieName       string `json:"movieName"`
+	NumberOfTickets int    `json:"numberOfTickets"`
+	ShowTiming      string `json:"showTiming"`
+	TotalPrice      int    `json:"totalPrice"`
 }
 
 // ============================================================================================================================
@@ -135,8 +144,10 @@ func (t *MTA) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return add_theatre(stub, args)
 	} else if function == "add_movies" { //add movie details on ledger
 		return add_movies(stub, args)
+	} else if function == "add_shows" { //add movie details on ledger
+		return add_shows(stub, args)
 	} else if function == "book_tickets" { //book movie tickets
-		return add_movies(stub, args)
+		return book_tickets(stub, args)
 	}
 
 	// error out

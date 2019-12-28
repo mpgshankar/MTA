@@ -302,7 +302,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 //  {"theatreRegNo":"value1","theatreLocation":"value2"}
 // ============================================================================================================================
 func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var key, theatreRegNo, value string
+	var value string
 	var ticketAsBytes []byte
 	// var err error
 	fmt.Println("starting book_tickets")

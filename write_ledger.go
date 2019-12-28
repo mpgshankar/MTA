@@ -185,7 +185,7 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 //  {"theatreRegNo":"value1","theatreLocation":"value2"}
 // ============================================================================================================================
 func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var key, theatreRegNo, value string
+	var theatreRegNo, value string
 	// var err error
 	fmt.Println("starting add_shows")
 
@@ -239,33 +239,16 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if screenNumber == 0 {
 		fmt.Println("All the screens are full for this show timing. Please select different time for show")
 		return shim.Error("All the screens are full for this show timing. Please select different time for show")
+	} else {
+		show.ScreenNumber = screenNumber
 	}
-	fmt.Println(screenNumber)
-	fmt.Println(key)
 
-	// value = strings.Replace(args[0], "\"", "", -1) //rename for funsies
+	showAsBytes, _ := json.Marshal(show)
 
-	// check movies when it will be releasing
-	// mov.Status = "Running"
-	// // if len(theatre.MoviesRunning) < theatre.NumberOfScreens {
-	// // 	theatre.MoviesRunning = append(theatre.MoviesRunning, mov)
-	// // } else {
-	// // 	return shim.Error("Only " + string(theatre.NumberOfScreens) + " movies can run for this theatre " + theatreRegNo)
-	// // }
-
-	// trAsBytes, _ := json.Marshal(theatre)
-
-	// errTr := stub.PutState(theatreRegNo, trAsBytes) // update the theatre details into the ledger
-	// if errTr != nil {
-	// 	return shim.Error("Failed to add movies : " + errTr.Error())
-	// }
-
-	// valueAsBytes, _ := json.Marshal(mov)
-
-	// errPut := stub.PutState(key, valueAsBytes) //write the movie details into the ledger
-	// if errPut != nil {
-	// 	return shim.Error("Failed to add movies : " + errPut.Error())
-	// }
+	errTr := stub.PutState(show.ShowId, showAsBytes) // update the theatre details into the ledger
+	if errTr != nil {
+		return shim.Error("Failed to add shows : " + errTr.Error())
+	}
 
 	fmt.Println("- end add_shows")
 	return shim.Success(nil)

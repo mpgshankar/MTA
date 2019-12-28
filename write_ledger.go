@@ -380,11 +380,12 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 		var jsonValue map[string]interface{}
 		json.Unmarshal([]byte(value), &jsonValue)
 		ticketId, _ = jsonValue["ticketId"].(string)
-
+		fmt.Println(ticketId)
 		tktAsBytes, _ := stub.GetState(ticketId)
 		ticket := Tickets{}
 		json.Unmarshal(tktAsBytes, &ticket)
 		forDate := ticket.ShowTiming[:10]
+		fmt.Println(forDate)
 
 		accAsBytes, _ := stub.GetState(forDate)
 		acc := Accessories{}

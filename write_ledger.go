@@ -216,6 +216,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	show.AvailableSeat = 100
 	show.BookedSeat = 0
 	show.ShowStatus = "Running"
+	show.TheatreRegNo = theatreRegNo
 	if strings.HasSuffix(show.ShowTiming, "am") {
 		show.PricePerTicket = 100
 	} else {
@@ -350,12 +351,14 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 	var screenNumber int
 	var arrayOfScreensUsed []int
 	var totalScreens []int
-
+	var unique []int
 	for i := 1; i <= noOfScreen; i++ {
 		totalScreens = append(totalScreens, i)
 	}
 
 	fmt.Println("========= screenAvailable start =========")
+	fmt.Println(movieId)
+	fmt.Println(showTiming)
 	queryResults, _ := getQueryResultForQueryString(stub, queryString)
 	fmt.Println(queryResults)
 	var arrayOfShows []Shows
@@ -368,8 +371,11 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 			fmt.Println("eachShow =======> ")
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)
 			fmt.Println(arrayOfScreensUsed)
-			fmt.Println(eachShow)
-
+			fmt.Println(eachShow.MovieId)
+			fmt.Println(eachShow.ShowTiming)
+			fmt.Println(eachShow.MovieId == movieId)
+			fmt.Println(eachShow.ShowTiming == showTiming)
+			fmt.Println(eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming)
 			if eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming {
 				return 0
 			}
@@ -377,13 +383,9 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 		if len(arrayOfScreensUsed) >= noOfScreen {
 			return 0
 		} else if screenNumber != 0 {
-			for _, v := range totalScreens {
-				for _, u := range arrayOfScreensUsed {
-					if v != u {
-						screenNumber = v
-						return screenNumber
-					}
-				}
+			unique = Difference(totalScreens, arrayOfScreensUsed)
+			for _, val := range unique {
+				return val
 			}
 		}
 	} else {
@@ -403,4 +405,20 @@ func greaterThanEqualCurrentDate(start, check time.Time) bool {
 //Check Whether Current Date equal to Relase Date
 func equalCurrentDate(start, check time.Time) bool {
 	return start.Equal(check)
+}
+
+// Set Difference: A - B
+func Difference(a, b []int) (diff []int) {
+	m := make(map[int]bool)
+
+	for _, item := range b {
+		m[item] = true
+	}
+
+	for _, item := range a {
+		if _, ok := m[item]; !ok {
+			diff = append(diff, item)
+		}
+	}
+	return diff
 }

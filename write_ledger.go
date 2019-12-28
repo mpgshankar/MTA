@@ -303,6 +303,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // ============================================================================================================================
 func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, theatreRegNo, value string
+	var ticketAsBytes []byte
 	// var err error
 	fmt.Println("starting book_tickets")
 
@@ -312,8 +313,10 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	queryFrm := `{"selector":{"docType":"Shows", "showId":"` + ticket.ShowId + `"}}`
 	queryString := fmt.Sprintf(queryFrm)
+	queryResults, _ := getQueryResultForQueryString(stub, queryString)
+
 	show := Shows{}
-	json.Unmarshal(queryString, &show)
+	json.Unmarshal(queryResults, &show)
 
 	if show.AvailableSeat == 0 {
 		return shim.Error("Failed to book tickets for show as no seats are available.")
@@ -337,7 +340,7 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 			ticket.Amenities = append(ticket.Amenities, amn)
 		}
 
-		ticketAsBytes, _ := json.Marshal(ticket)
+		ticketAsBytes, _ = json.Marshal(ticket)
 		errTkt := stub.PutState(ticket.TicketId, ticketAsBytes) // update the theatre details into the ledger
 		if errTkt != nil {
 			return shim.Error("Failed to book tickets : " + errTkt.Error())

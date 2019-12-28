@@ -20,6 +20,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -309,69 +310,31 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var ticket Tickets
 	json.Unmarshal([]byte(value), &ticket)
 
-	//check if theatre exists or not
-	theatreAsBytes, _ := stub.GetState(theatreRegNo)
-	if theatreAsBytes == nil {
-		fmt.Println("This theatre does not exists - " + theatreRegNo)
-		return shim.Error("This theatre does not exists - " + theatreRegNo)
-	}
-	theatre := Theatre{}
-	json.Unmarshal(theatreAsBytes, &theatre) //un stringify it aka JSON.parse()
-	movieId := ticket.MovieId
-	noOfTickets := ticket.NumberOfTickets
-	movieTiming := ticket.ShowTiming
-	// moviesRunning := theatre.MoviesRunning
-	fmt.Println(noOfTickets)
-	fmt.Println(movieTiming)
+	queryFrm := `{"selector":{"docType":"Shows", "showId":"` + ticket.ShowId + `"}}`
+	queryString := fmt.Sprintf(queryFrm)
+	show := Shows{}
+	json.Unmarshal(queryString, &show)
 
-	//check if movie exists or not
-	movieAsBytes, _ := stub.GetState(movieId)
-	if theatreAsBytes == nil {
-		fmt.Println("This movie does not exists - " + movieId)
-		return shim.Error("This movie does not exists - " + movieId)
-	}
-	movies := Movies{}
-	json.Unmarshal(movieAsBytes, &movies) //un stringify it aka JSON.parse()
-	fmt.Println(key)
+	if show.AvailableSeat == 0 {
+		return shim.Error("Failed to book tickets for show as no seats are available.")
+	} else if ticket.NumberOfTickets <= show.AvailableSeat {
+		movieAsBytes, _ := stub.GetState(show.MovieId)
+		mov := Movies{}
+		json.Unmarshal(movieAsBytes, &mov)
+		ticket.MovieName = mov.MovieName
+		ticket.ShowTiming = show.ShowTiming
+		show.BookedSeat += ticket.NumberOfTickets
+		show.AvailableSeat -= ticket.NumberOfTickets
 
-	if movies.Status == "Running" || movies.Status == "Coming Soon" {
-		// for i, _ := range movies.ShowTimings {
-		// 	if movies.ShowTimings[i].ShowTiming == movieTiming {
-		// 		if movies.ShowTimings[i].AvailableSeat == 0 {
-		// 			return shim.Error("Booking limit reached. Show is Housefull")
-		// 		} else if movies.ShowTimings[i].AvailableSeat >= noOfTickets {
-		// 			ticket.TotalPrice = noOfTickets * movies.ShowTimings[i].PricePerTicket
-		// 			movies.ShowTimings[i].AvailableSeat -= noOfTickets
-		// 			movies.ShowTimings[i].BookedSeat += noOfTickets
-		// 		} else {
-		// 			movies.ShowTimings[i].ShowStatus = "HouseFull"
-		// 		}
-		// 	}
-		// }
-	}
-
-	// for i, _ := range theatre.MoviesRunning {
-	// 	if movieId == theatre.MoviesRunning {
-	// 		if movie.Status == "Running" || movie.Status == "Coming Soon" {
-	// 			showTimings := movie.ShowTimings
-	// 			for _, show := range showTimings {
-	// 				if show.ShowTiming == movieTiming {
-	// 					ticket.TotalPrice = noOfTickets * show.PricePerTicket
-	// 				}
-	// 			}
-
-	// 		} else {
-	// 			return shim.Error("Booking currently not allowed for " + movie.MovieName)
-	// 		}
-	// 	}
-
-	// }
-
-	trAsBytes, _ := json.Marshal(theatre)
-
-	errTr := stub.PutState(theatreRegNo, trAsBytes) // update the theatre details into the ledger
-	if errTr != nil {
-		return shim.Error("Failed to add movies : " + errTr.Error())
+		for i := 1; i <= ticket.NumberOfTickets; i++ {
+			var amn Amenities
+			amn.SeatNumber = show.TheatreRegNo + show.ShowId + strconv.Itoa(rand.Intn(100000))
+			amn.PopCorn = 1
+			amn.Water = 1
+			ticket.Amenities = append(ticket.Amenities, amn)
+		}
+	} else {
+		return shim.Error("Failed to book tickets for shows as only " + strconv.Itoa(show.AvailableSeat) + " seats are available.")
 	}
 
 	fmt.Println("- end book_tickets")

@@ -367,7 +367,7 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 //  {"theatreRegNo":"value1","theatreLocation":"value2"}
 // ============================================================================================================================
 func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var ticketId, showId, value string
+	var ticketId, value string
 	// var err error
 	fmt.Println("starting exchange_water")
 

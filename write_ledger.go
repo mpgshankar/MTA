@@ -367,7 +367,7 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)
 			fmt.Println("eachShow.ShowTiming[:10] ====> ")
 			fmt.Println(eachShow.ShowTiming[:10])
-			if checkDayBasedShow == eachShow.ShowTiming[:10] && movieId == eachShow.MovieId == movieId {
+			if checkDayBasedShow == eachShow.ShowTiming[:10] && movieId == eachShow.MovieId {
 				showsPerDay += 1
 			}
 			if eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming {

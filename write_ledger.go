@@ -319,6 +319,8 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		movieAsBytes, _ := stub.GetState(show.MovieId)
 		mov := Movies{}
 		json.Unmarshal(movieAsBytes, &mov)
+		rand.Seed(time.Now().UnixNano())
+
 		ticket.ObjectType = "Tickets"
 		ticket.TicketId = "T" + show.TheatreRegNo + show.ShowId + strconv.Itoa(rand.Intn(1000000))
 		ticket.MovieName = mov.MovieName
@@ -370,7 +372,7 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	var ticketId, value string
 	// var err error
 	fmt.Println("starting exchange_water")
-
+	rand.Seed(time.Now().UnixNano())
 	randNo := rand.Intn(200)
 	fmt.Println("randNo ====> ")
 	fmt.Println(randNo)
@@ -395,24 +397,24 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 				amn.Water = 0
 				amn.Soda = 1
 				ticket.Amenities[i] = amn
+				fmt.Println(ticket.Amenities[i])
 			}
 			acc.AvailableQty -= ticket.NumberOfTickets
 			ticketAsBytes, _ := json.Marshal(ticket)
-			errTkt := stub.PutState(ticket.TicketId, ticketAsBytes) // update the theatre details into the ledger
+			errTkt := stub.PutState(ticketId, ticketAsBytes) // update the theatre details into the ledger
 			if errTkt != nil {
 				return shim.Error("Failed to exchange_water : " + errTkt.Error())
 			}
 
 			accAsBytes, _ := json.Marshal(acc)
-			errAcc := stub.PutState(acc.ForDate, accAsBytes) // update the theatre details into the ledger
+			errAcc := stub.PutState(forDate, accAsBytes) // update the theatre details into the ledger
 			if errAcc != nil {
 				return shim.Error("Failed to exchange_water : " + errAcc.Error())
 			}
 
 		} else {
 			fmt.Println("Soda is out of stock.")
-			return shim.Error("Exchanging Water with Soda is currently not possible.")
-
+			return shim.Error("Soda is out of stock.")
 		}
 	} else {
 		fmt.Println("Exchanging Water with Soda is currently not possible.")

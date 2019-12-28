@@ -22,7 +22,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
+	"strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
@@ -153,7 +153,7 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if len(theatre.MoviesRunning) < theatre.NumberOfScreens {
 		theatre.MoviesRunning = append(theatre.MoviesRunning, mov)
 	} else {
-		return shim.Error("Only " + string(theatre.NumberOfScreens) + " movies can run for this theatre " + theatreRegNo)
+		return shim.Error("Only " + strconv.Itoa(theatre.NumberOfScreens) + " movies can run for this theatre " + theatreRegNo)
 	}
 
 	trAsBytes, _ := json.Marshal(theatre)
@@ -241,6 +241,9 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	if screenNumber == 0 {
 		fmt.Println("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
 		return shim.Error("All the screens are full for this show timing or this movie is already running for the show timing on another screen. Please select different time for show")
+	} else if screenNumber == 20 {
+		fmt.Println("Only 4 shows are allowed for a day for a particular movie")
+		return shim.Error("Only 4 shows are allowed for a day for a particular movie")
 	}
 	show.ScreenNumber = screenNumber
 	showAsBytes, _ := json.Marshal(show)

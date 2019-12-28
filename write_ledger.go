@@ -292,7 +292,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 }
 
 // ============================================================================================================================
-// book_tickets() - Bur Movie Tickets and record into ledger
+// book_tickets() - Buy Movie Tickets and record into ledger
 //
 // Shows Off PutState() - writting a key/value into the ledger
 //
@@ -353,6 +353,41 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	}
 
 	fmt.Println("- end book_tickets")
+	return shim.Success(ticketAsBytes)
+}
+
+// ============================================================================================================================
+// exchange_water() - Exchange Water with Soda and record into ledger
+//
+// Shows Off PutState() - writting a key/value into the ledger
+//
+// Inputs - JSON Object
+//    0
+//   json_object
+//  {"theatreRegNo":"value1","theatreLocation":"value2"}
+// ============================================================================================================================
+func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var ticketId, showId, value string
+	// var err error
+	fmt.Println("starting exchange_water")
+
+	value = args[0]
+	var jsonValue map[string]interface{}
+	json.Unmarshal([]byte(value), &jsonValue)
+	ticketId, _ = jsonValue["ticketId"].(string)
+	showId, _ = jsonValue["showId"].(string)
+
+	tktAsBytes, _ = stub.GetState(ticketId)
+	ticket := Tickets{}
+	json.Unmarshal(tktAsBytes, &ticket)
+
+	shwAsBytes, _ = stub.GetState(showId)
+	show := Shows{}
+	json.Unmarshal(shwAsBytes, &show)
+
+	randNo := rand.Intn(200)
+
+	fmt.Println("- end exchange_water")
 	return shim.Success(ticketAsBytes)
 }
 

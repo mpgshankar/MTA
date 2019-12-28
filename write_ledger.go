@@ -348,36 +348,46 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 //Check Whether Current Date greater than or equal to Relase Date
 func screenAvailable(noOfScreen int, showTiming string, showDate string, movieId string, stub shim.ChaincodeStubInterface) int {
-	queryFrm := `{"selector":{"docType":"Shows", "showDate":"` + showDate + `"}}`
+	queryFrmDate := `{"selector":{"docType":"Shows", "showDate":"` + showDate + `"}}`
+	queryStringDate := fmt.Sprintf(queryFrmDate)
+
+	queryFrm := `{"selector":{"docType":"Shows", "showTiming":"` + showTiming + `"}}`
 	queryString := fmt.Sprintf(queryFrm)
 	var screenNumber int
 	var arrayOfScreensUsed []int
 	var totalScreens []int
 	var unique []int
-	showsPerDay := 0
+	showsPerDay := 1
 	for i := 1; i <= noOfScreen; i++ {
 		totalScreens = append(totalScreens, i)
 	}
 
+	queryResultsDate, _ := getQueryResultForQueryString(stub, queryStringDate)
+	var arrayOfShowsDate []Shows
+	json.Unmarshal(queryResultsDate, &arrayOfShowsDate)
+	if len(arrayOfShowsDate) > 0 {
+		for _, eachShowDate := range arrayOfShows {
+			if showDate == eachShowDate.ShowDate && movieId == eachShowDate.MovieId {
+				showsPerDay += 1
+			}
+		}
+		if showsPerDay > 4 {
+			return 20 // Maximum Shows for a particular movie reached
+		} 
+	}
 	queryResults, _ := getQueryResultForQueryString(stub, queryString)
 	var arrayOfShows []Shows
 	json.Unmarshal(queryResults, &arrayOfShows)
 	if len(arrayOfShows) > 0 {
 		for _, eachShow := range arrayOfShows {
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)
-			fmt.Println("eachShow.ShowTiming[:10] ====> ")
-			fmt.Println(eachShow.ShowDate)
-			if showDate == eachShow.ShowDate && movieId == eachShow.MovieId {
-				showsPerDay += 1
-			}
+			
 			if eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming {
 				return 0
 			}
 		}
 		if len(arrayOfScreensUsed) >= noOfScreen {
 			return 0
-		} else if showsPerDay > 4 {
-			return 20 // Maximum Shows for a particular movie reached
 		} else {
 			unique = Difference(totalScreens, arrayOfScreensUsed)
 			for _, val := range unique {

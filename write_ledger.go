@@ -269,6 +269,23 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("Failed to add shows : " + errShw.Error())
 	}
 
+	var acc Accessories
+	acc.ObjectType = "Accessories"
+	acc.Asset = "Soda"
+	acc.TotalQty = 200
+	acc.ForDate = show.ShowDate
+	acc.AvailableQty = 200
+
+	//check if Accessories already exists
+	access, _ := stub.GetState(acc.ForDate)
+	if access == nil {
+		accAsBytes, _ := json.Marshal(acc)
+		errAcc := stub.PutState(acc.ForDate, accAsBytes) // update the theatre details into the ledger
+		if errAcc != nil {
+			return shim.Error("Failed to add shows : " + errShw.Error())
+		}
+	}
+
 	fmt.Println("- end add_shows")
 	return shim.Success(nil)
 }

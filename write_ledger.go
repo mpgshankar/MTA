@@ -350,6 +350,9 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 	var arrayOfScreensUsed []int
 	var totalScreens []int
 	var unique []int
+	showsPerDay := 0
+	checkDayBasedShow := showTiming[:10]
+	fmt.Println(checkDayBasedShow)
 	for i := 1; i <= noOfScreen; i++ {
 		totalScreens = append(totalScreens, i)
 	}
@@ -359,12 +362,19 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 	if len(arrayOfShows) > 0 {
 		for _, eachShow := range arrayOfShows {
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)
+			fmt.Println("eachShow.ShowTiming[:10] ====> ")
+			fmt.Println(eachShow.ShowTiming[:10])
+			if checkDayBasedShow == eachShow.ShowTiming[:10] && movieId == eachShow.MovieId == movieId {
+				showsPerDay += 1
+			}
 			if eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming {
 				return 0
 			}
 		}
 		if len(arrayOfScreensUsed) >= noOfScreen {
 			return 0
+		} else if showsPerDay > 4 {
+			return 20 // Maximum Shows for a particular movie reached
 		} else {
 			unique = Difference(totalScreens, arrayOfScreensUsed)
 			for _, val := range unique {

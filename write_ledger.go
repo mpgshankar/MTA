@@ -382,7 +382,7 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 		ticketId, _ = jsonValue["ticketId"].(string)
 		showId, _ = jsonValue["showId"].(string)
 
-		tktAsBytes, _ = stub.GetState(ticketId)
+		tktAsBytes, _ := stub.GetState(ticketId)
 		ticket := Tickets{}
 		json.Unmarshal(tktAsBytes, &ticket)
 		forDate := ticket.ShowTiming[:10]
@@ -420,7 +420,7 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	}
 
 	fmt.Println("- end exchange_water")
-	return shim.Success(ticketAsBytes)
+	return shim.Success(nil)
 }
 
 // Assigns screen number for a particular show

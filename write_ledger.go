@@ -371,21 +371,38 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 	// var err error
 	fmt.Println("starting exchange_water")
 
-	value = args[0]
-	var jsonValue map[string]interface{}
-	json.Unmarshal([]byte(value), &jsonValue)
-	ticketId, _ = jsonValue["ticketId"].(string)
-	showId, _ = jsonValue["showId"].(string)
-
-	tktAsBytes, _ = stub.GetState(ticketId)
-	ticket := Tickets{}
-	json.Unmarshal(tktAsBytes, &ticket)
-
-	shwAsBytes, _ = stub.GetState(showId)
-	show := Shows{}
-	json.Unmarshal(shwAsBytes, &show)
-
 	randNo := rand.Intn(200)
+	fmt.Println("randNo ====> ")
+	fmt.Println(randNo)
+
+	if randNo%2 == 0 {
+		value = args[0]
+		var jsonValue map[string]interface{}
+		json.Unmarshal([]byte(value), &jsonValue)
+		ticketId, _ = jsonValue["ticketId"].(string)
+		showId, _ = jsonValue["showId"].(string)
+
+		tktAsBytes, _ = stub.GetState(ticketId)
+		ticket := Tickets{}
+		json.Unmarshal(tktAsBytes, &ticket)
+		forDate := ticket.ShowTiming[:10]
+
+		accAsBytes, _ := stub.GetState(forDate)
+		acc := Accessories{}
+		json.Unmarshal(accAsBytes, acc)
+		if acc.AvailableQty <= ticket.NumberOfTickets {
+			for _, amn := range ticket.Amenities {
+				amn.Water = 0
+				amn.Soda = 1
+			}
+			acc.AvailableQty -= ticket.NumberOfTickets
+		} else {
+
+		}
+	} else {
+		fmt.Println("Exchanging Water with Soda is currently not possible.")
+		return shim.Error("Exchanging Water with Soda is currently not possible.")
+	}
 
 	fmt.Println("- end exchange_water")
 	return shim.Success(ticketAsBytes)

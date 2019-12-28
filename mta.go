@@ -75,6 +75,7 @@ type Tickets struct {
 	NumberOfTickets int         `json:"numberOfTickets"`
 	ShowTiming      string      `json:"showTiming"`
 	TotalPrice      int         `json:"totalPrice"`
+	ScreenNumber    int         `json:"screenNumber"`
 	Amenities       []Amenities `json:"amenities"`
 }
 

@@ -283,7 +283,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		accAsBytes, _ := json.Marshal(acc)
 		errAcc := stub.PutState(acc.ForDate, accAsBytes) // update the theatre details into the ledger
 		if errAcc != nil {
-			return shim.Error("Failed to add shows : " + errShw.Error())
+			return shim.Error("Failed to add shows : " + errAcc.Error())
 		}
 	}
 
@@ -321,24 +321,40 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		movieAsBytes, _ := stub.GetState(show.MovieId)
 		mov := Movies{}
 		json.Unmarshal(movieAsBytes, &mov)
+		ticket.TicketId = "T" + show.TheatreRegNo + show.ShowId + strconv.Itoa(rand.Intn(1000000))
 		ticket.MovieName = mov.MovieName
 		ticket.ShowTiming = show.ShowTiming
+		ticket.TotalPrice = show.PricePerTicket * ticket.NumberOfTickets
+		ticket.ScreenNumber = show.ScreenNumber
 		show.BookedSeat += ticket.NumberOfTickets
 		show.AvailableSeat -= ticket.NumberOfTickets
 
 		for i := 1; i <= ticket.NumberOfTickets; i++ {
 			var amn Amenities
-			amn.SeatNumber = show.TheatreRegNo + show.ShowId + strconv.Itoa(rand.Intn(100000))
+			amn.SeatNumber = "S" + show.TheatreRegNo + show.ShowId + strconv.Itoa(rand.Intn(100000))
 			amn.PopCorn = 1
 			amn.Water = 1
 			ticket.Amenities = append(ticket.Amenities, amn)
 		}
+
+		ticketAsBytes, _ := json.Marshal(ticket)
+		errTkt := stub.PutState(ticket.TicketId, ticketAsBytes) // update the theatre details into the ledger
+		if errTkt != nil {
+			return shim.Error("Failed to book tickets : " + errTkt.Error())
+		}
+
+		showAsBytes, _ := json.Marshal(show)
+		errShow := stub.PutState(show.ShowId, showAsBytes) // update the theatre details into the ledger
+		if errShow != nil {
+			return shim.Error("Failed to book tickets : " + errShow.Error())
+		}
+
 	} else {
 		return shim.Error("Failed to book tickets for shows as only " + strconv.Itoa(show.AvailableSeat) + " seats are available.")
 	}
 
 	fmt.Println("- end book_tickets")
-	return shim.Success(nil)
+	return shim.Success(ticketAsBytes)
 }
 
 // Assigns screen number for a particular show

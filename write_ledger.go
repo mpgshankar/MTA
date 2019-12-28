@@ -236,7 +236,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		return shim.Error("You cannot add a show for a movie which is not running in - " + theatreRegNo)
 	}
 
-	screenNumber := screenAvailable(ttr.NumberOfScreens, show.ShowTiming, stub)
+	screenNumber := screenAvailable(ttr.NumberOfScreens, show.ShowTiming, show.MovieId, stub)
 	if screenNumber == 0 {
 		fmt.Println("All the screens are full for this show timing. Please select different time for show")
 		return shim.Error("All the screens are full for this show timing. Please select different time for show")
@@ -344,7 +344,7 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 }
 
 //Check Whether Current Date greater than or equal to Relase Date
-func screenAvailable(noOfScreen int, showTiming string, stub shim.ChaincodeStubInterface) int {
+func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shim.ChaincodeStubInterface) int {
 	queryFrm := `{"selector":{"docType":"Shows", "showTiming":"` + showTiming + `"}}`
 	queryString := fmt.Sprintf(queryFrm)
 	var screenNumber int
@@ -368,10 +368,14 @@ func screenAvailable(noOfScreen int, showTiming string, stub shim.ChaincodeStubI
 			fmt.Println("eachShow =======> ")
 			arrayOfScreensUsed = append(arrayOfScreensUsed, show.ScreenNumber)
 			fmt.Println(eachShow)
+
+			if show.MovieId == movieId && show.ShowTiming == showTiming {
+				return 0
+			}
 		}
 		if len(arrayOfScreensUsed) >= noOfScreen {
 			return 0
-		} else {
+		} else if screenNumber != 0 {
 			for _, v := range totalScreens {
 				for _, u := range arrayOfScreensUsed {
 					if v != u {

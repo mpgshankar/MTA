@@ -384,6 +384,8 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 			return 0
 		} else if screenNumber != 0 {
 			unique = Difference(totalScreens, arrayOfScreensUsed)
+			fmt.Println("unique ====> ")
+			fmt.Println(unique)
 			for _, val := range unique {
 				return val
 			}

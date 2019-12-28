@@ -50,6 +50,7 @@ type Movies struct {
 	Status       string `json:"status"`
 }
 
+// Shows Struct
 type Shows struct {
 	ObjectType     string `json:"docType"` // field defined for couchdb
 	ShowId         string `json:"showId"`
@@ -65,15 +66,33 @@ type Shows struct {
 	ScreenNumber   int    `json:"screenNumber"`
 }
 
+// Tickets Struct
 type Tickets struct {
-	ObjectType      string `json:"docType"` // field defined for couchdb
-	WindowId        string `json:"windowId"`
-	TicketId        string `json:"ticketId"`
-	MovieId         string `json:"movieId"`
-	MovieName       string `json:"movieName"`
-	NumberOfTickets int    `json:"numberOfTickets"`
-	ShowTiming      string `json:"showTiming"`
-	TotalPrice      int    `json:"totalPrice"`
+	ObjectType      string      `json:"docType"` // field defined for couchdb
+	TicketId        string      `json:"ticketId"`
+	ShowId          string      `json:"showId"`
+	MovieName       string      `json:"movieName"`
+	NumberOfTickets int         `json:"numberOfTickets"`
+	ShowTiming      string      `json:"showTiming"`
+	TotalPrice      int         `json:"totalPrice"`
+	Amenities       []Amenities `json:"amenities"`
+}
+
+// Amenities Struct
+type Amenities struct {
+	SeatNumber string `json:"seatNumber"`
+	Water      int    `json:"water"`
+	PopCorn    int    `json:"popCorn"`
+	Soda       int    `json:"soda"`
+}
+
+// Accessories Struct
+type Accessories struct {
+	ObjectType   string `json:"docType"` // field defined for couchdb
+	Asset        string `json:"asset"`
+	TotalQty     int    `json:"totalQty"`
+	ForDate      string `json:"forDate"`
+	AvailableQty int    `json:"availableQty"`
 }
 
 // ============================================================================================================================

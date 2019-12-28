@@ -20,9 +20,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 )
@@ -87,6 +88,13 @@ func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var jsonValue map[string]interface{}
 	json.Unmarshal([]byte(value), &jsonValue)
 	key, _ = jsonValue["theatreRegNo"].(string)
+
+	//check if theatre already exists
+	tr, _ := stub.GetState(key)
+	if tr != nil {
+		fmt.Println("This theatre already exists - " + key)
+		return shim.Error("This theatre already exists - " + key)
+	}
 
 	valueAsBytes, _ := json.Marshal(jsonValue)
 
@@ -224,6 +232,13 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 		show.PricePerTicket = 180
 	}
 
+	//check if show already exists
+	sw, _ := stub.GetState(show.ShowId)
+	if sw != nil {
+		fmt.Println("This show already exists - " + show.ShowId)
+		return shim.Error("This show already exists - " + show.ShowId)
+	}
+
 	//check if theatre exists or not
 	movieAsBytes, _ := stub.GetState(show.MovieId)
 	if movieAsBytes == nil {
@@ -346,8 +361,9 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	return shim.Success(nil)
 }
 
-//Check Whether Current Date greater than or equal to Relase Date
+// Assigns screen number for a particular show
 func screenAvailable(noOfScreen int, showTiming string, showDate string, movieId string, stub shim.ChaincodeStubInterface) int {
+	// Compares whether a movie is not running more than 4 times a day.
 	queryFrmDate := `{"selector":{"docType":"Shows", "showDate":"` + showDate + `"}}`
 	queryStringDate := fmt.Sprintf(queryFrmDate)
 
@@ -373,15 +389,17 @@ func screenAvailable(noOfScreen int, showTiming string, showDate string, movieId
 		}
 		if showsPerDay > 4 {
 			return 20 // Maximum Shows for a particular movie reached
-		} 
+		}
 	}
+
+	// Assigns screens for a particular show for a movie.
 	queryResults, _ := getQueryResultForQueryString(stub, queryString)
 	var arrayOfShows []Shows
 	json.Unmarshal(queryResults, &arrayOfShows)
 	if len(arrayOfShows) > 0 {
 		for _, eachShow := range arrayOfShows {
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)
-			
+
 			if eachShow.MovieId == movieId && eachShow.ShowTiming == showTiming {
 				return 0
 			}

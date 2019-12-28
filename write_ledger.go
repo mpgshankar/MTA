@@ -355,7 +355,6 @@ func screenAvailable(noOfScreen int, showTiming string, showDate string, movieId
 	var totalScreens []int
 	var unique []int
 	showsPerDay := 0
-	fmt.Println(checkDayBasedShow)
 	for i := 1; i <= noOfScreen; i++ {
 		totalScreens = append(totalScreens, i)
 	}

@@ -242,12 +242,12 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	} else {
 		show.ScreenNumber = screenNumber
 	}
-
+	fmt.Println(show)
 	showAsBytes, _ := json.Marshal(show)
 
-	errTr := stub.PutState(show.ShowId, showAsBytes) // update the theatre details into the ledger
-	if errTr != nil {
-		return shim.Error("Failed to add shows : " + errTr.Error())
+	errShw := stub.PutState(show.ShowId, showAsBytes) // update the theatre details into the ledger
+	if errShw != nil {
+		return shim.Error("Failed to add shows : " + errShw.Error())
 	}
 
 	fmt.Println("- end add_shows")
@@ -375,7 +375,6 @@ func screenAvailable(noOfScreen int, showTiming string, stub shim.ChaincodeStubI
 				for _, u := range arrayOfScreensUsed {
 					if v != u {
 						screenNumber = v
-						break
 					}
 				}
 			}
@@ -383,7 +382,7 @@ func screenAvailable(noOfScreen int, showTiming string, stub shim.ChaincodeStubI
 	} else {
 		screenNumber = 1
 	}
-
+	fmt.Println(screenNumber)
 	fmt.Println("========= screenAvailable end =========")
 
 	return screenNumber

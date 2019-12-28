@@ -382,22 +382,25 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 		var jsonValue map[string]interface{}
 		json.Unmarshal([]byte(value), &jsonValue)
 		ticketId, _ = jsonValue["ticketId"].(string)
-		fmt.Println(ticketId)
+
 		tktAsBytes, _ := stub.GetState(ticketId)
 		ticket := Tickets{}
 		json.Unmarshal(tktAsBytes, &ticket)
 		forDate := ticket.ShowTiming[:10]
-		fmt.Println(forDate)
 
 		accAsBytes, _ := stub.GetState(forDate)
 		acc := Accessories{}
-		json.Unmarshal(accAsBytes, acc)
-		if acc.AvailableQty <= ticket.NumberOfTickets {
+		json.Unmarshal(accAsBytes, &acc)
+		fmt.Println(acc)
+		if ticket.NumberOfTickets <= acc.AvailableQty {
 			for i, amn := range ticket.Amenities {
+				if amn.Soda == 1 {
+					return shim.Error("Soda has already been exchanged for this ticket.")
+				}
 				amn.Water = 0
 				amn.Soda = 1
 				ticket.Amenities[i] = amn
-				fmt.Println(ticket.Amenities[i])
+				// fmt.Println(ticket.Amenities[i])
 			}
 			acc.AvailableQty -= ticket.NumberOfTickets
 			ticketAsBytes, _ := json.Marshal(ticket)
@@ -405,6 +408,7 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 			if errTkt != nil {
 				return shim.Error("Failed to exchange_water : " + errTkt.Error())
 			}
+			fmt.Println(acc)
 
 			accessAsBytes, _ := json.Marshal(acc)
 			errAcc := stub.PutState(forDate, accessAsBytes) // update the theatre details into the ledger

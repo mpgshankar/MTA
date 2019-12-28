@@ -366,7 +366,7 @@ func screenAvailable(noOfScreen int, showTiming string, showDate string, movieId
 	var arrayOfShowsDate []Shows
 	json.Unmarshal(queryResultsDate, &arrayOfShowsDate)
 	if len(arrayOfShowsDate) > 0 {
-		for _, eachShowDate := range arrayOfShows {
+		for _, eachShowDate := range arrayOfShowsDate {
 			if showDate == eachShowDate.ShowDate && movieId == eachShowDate.MovieId {
 				showsPerDay += 1
 			}

@@ -391,12 +391,27 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 		acc := Accessories{}
 		json.Unmarshal(accAsBytes, acc)
 		if acc.AvailableQty <= ticket.NumberOfTickets {
-			for _, amn := range ticket.Amenities {
+			for i, amn := range ticket.Amenities {
 				amn.Water = 0
 				amn.Soda = 1
+				ticket.Amenities[i] = amn
 			}
 			acc.AvailableQty -= ticket.NumberOfTickets
+			ticketAsBytes, _ := json.Marshal(ticket)
+			errTkt := stub.PutState(ticket.TicketId, ticketAsBytes) // update the theatre details into the ledger
+			if errTkt != nil {
+				return shim.Error("Failed to exchange_water : " + errTkt.Error())
+			}
+
+			accAsBytes, _ := json.Marshal(acc)
+			errAcc := stub.PutState(acc.ForDate, accAsBytes) // update the theatre details into the ledger
+			if errAcc != nil {
+				return shim.Error("Failed to exchange_water : " + errAcc.Error())
+			}
+
 		} else {
+			fmt.Println("Soda is out of stock.")
+			return shim.Error("Exchanging Water with Soda is currently not possible.")
 
 		}
 	} else {

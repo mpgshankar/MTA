@@ -170,6 +170,8 @@ func (t *MTA) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return add_shows(stub, args)
 	} else if function == "book_tickets" { //book movie tickets
 		return book_tickets(stub, args)
+	} else if function == "exchange_water" { //exchange water with soda
+		return exchange_water(stub, args)
 	}
 
 	// error out

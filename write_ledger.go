@@ -362,6 +362,7 @@ func screenAvailable(noOfScreen int, showTiming string, movieId string, stub shi
 
 	queryResults, _ := getQueryResultForQueryString(stub, queryString)
 	var arrayOfShows []Shows
+	json.Unmarshal(queryResults, &arrayOfShows)
 	if len(arrayOfShows) > 0 {
 		for _, eachShow := range arrayOfShows {
 			arrayOfScreensUsed = append(arrayOfScreensUsed, eachShow.ScreenNumber)

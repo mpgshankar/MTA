@@ -406,8 +406,8 @@ func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response
 				return shim.Error("Failed to exchange_water : " + errTkt.Error())
 			}
 
-			accAsBytes, _ := json.Marshal(acc)
-			errAcc := stub.PutState(forDate, accAsBytes) // update the theatre details into the ledger
+			accessAsBytes, _ := json.Marshal(acc)
+			errAcc := stub.PutState(forDate, accessAsBytes) // update the theatre details into the ledger
 			if errAcc != nil {
 				return shim.Error("Failed to exchange_water : " + errAcc.Error())
 			}

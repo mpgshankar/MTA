@@ -236,6 +236,10 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	}
 
 	screenNumber := screenAvailable(ttr.NumberOfScreens, show.ShowTiming, stub)
+	if screenNumber == 0 {
+		fmt.Println("All the screens are full for this show timing. Please select different time for show")
+		return shim.Error("All the screens are full for this show timing. Please select different time for show")
+	}
 	fmt.Println(screenNumber)
 	fmt.Println(key)
 
@@ -357,20 +361,49 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 //Check Whether Current Date greater than or equal to Relase Date
 func screenAvailable(noOfScreen int, showTiming string, stub shim.ChaincodeStubInterface) int {
-	queryFrm := `{"selector":{"docType":"Shows", "showTiming":` + showTiming + `}}`
+	queryFrm := `{"selector":{"docType":"Shows", "showTiming":"` + showTiming + `"}}`
 	queryString := fmt.Sprintf(queryFrm)
+	var screenNumber int
+	var arrayOfScreensUsed []int
+	var totalScreens []int
+
+	for i := 1; i <= noOfScreen; i++ {
+		totalScreens = append(totalScreens, i)
+	}
 
 	fmt.Println("========= screenAvailable start =========")
 	queryResults, _ := getQueryResultForQueryString(stub, queryString)
 	fmt.Println(queryResults)
-	for _, eachShow := range queryResults {
-		fmt.Println("eachShow =======> ")
+	var arrayOfShows []Shows
+	json.Unmarshal(queryResults, &arrayOfShows)
+	fmt.Println(len(arrayOfShows))
+	if len(arrayOfShows) > 0 {
+		for _, eachShow := range arrayOfShows {
+			show := Shows{}
 
-		fmt.Println(eachShow)
+			fmt.Println("eachShow =======> ")
+			arrayOfScreensUsed = append(arrayOfScreensUsed, show.ScreenNumber)
+			fmt.Println(eachShow)
+		}
+		if len(arrayOfScreensUsed) >= noOfScreen {
+			return 0
+		} else {
+			for _, v := range totalScreens {
+				for _, u := range arrayOfScreensUsed {
+					if v != u {
+						screenNumber = v
+						break
+					}
+				}
+			}
+		}
+	} else {
+		screenNumber = 1
 	}
+
 	fmt.Println("========= screenAvailable end =========")
 
-	return 4
+	return screenNumber
 }
 
 //Check Whether Current Date greater than or equal to Relase Date

@@ -18,7 +18,9 @@ Here movieId can be any unique Id to distinguish between Movies
 
 # Step 3 :
 ## Add Shows
-Once the movie has been added for a Theatre. Theatre user can add shows using their credentials. 
+Once the movie has been added for a Theatre. Theatre user can add shows using their credentials.
+While adding shows the application will itself identify available screens on which the current
+show will be running. Also sanity checks like each day max 4 shows can run for a Movie is also done.  
 To add shows we need to invoke `add_shows` function which takes only 1 argument of JSON Object.
 Sample :- {"showId":"value1","showTiming":"value2", "movieId":"value3","docType":"value4"}
 Here showId can be any unique Id to distinguish between Shows for Movies

@@ -73,7 +73,7 @@ func invoke_transaction_insert_update(stub shim.ChaincodeStubInterface, args []s
 // Inputs - JSON Object
 //    0
 //   json_object
-//  {"theatreRegNo":"value1","theatreLocation":"value2"}
+//  {"theatreRegNo":"value1","theatreLocation":"value2","theatreName":"value3","numberOfScreens":"value4","docType":"value5"}
 // ============================================================================================================================
 func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, value string
@@ -116,7 +116,7 @@ func add_theatre(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // Inputs - JSON Object
 //    0
 //   json_object
-//  {"theatreRegNo":"value1","theatreLocation":"value2"}
+//  {"movieId":"value1","movieName":"value2","docType":"value3"}
 // ============================================================================================================================
 func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var key, theatreRegNo, value string
@@ -191,7 +191,7 @@ func add_movies(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // Inputs - JSON Object
 //    0
 //   json_object
-//  {"theatreRegNo":"value1","theatreLocation":"value2"}
+//  {"showId":"value1","showTiming":"value2", "movieId":"value3","docType":"value4"}
 // ============================================================================================================================
 func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var theatreRegNo, value string
@@ -299,7 +299,7 @@ func add_shows(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // Inputs - JSON Object
 //    0
 //   json_object
-//  {"theatreRegNo":"value1","theatreLocation":"value2"}
+//  {"showId":"value1","numberOfTickets":"value2"}
 // ============================================================================================================================
 func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var value string
@@ -366,7 +366,7 @@ func book_tickets(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // Inputs - JSON Object
 //    0
 //   json_object
-//  {"theatreRegNo":"value1","theatreLocation":"value2"}
+//  {"ticketId":"value1"}
 // ============================================================================================================================
 func exchange_water(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var ticketId, value string

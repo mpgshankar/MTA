@@ -24,4 +24,20 @@ show will be running. Also sanity checks like each day max 4 shows can run for a
 To add shows we need to invoke `add_shows` function which takes only 1 argument of JSON Object.
 Sample :- {"showId":"value1","showTiming":"value2", "movieId":"value3","docType":"value4"}
 Here showId can be any unique Id to distinguish between Shows for Movies
+
+# Step 4 :
+## Book Tickets
+Once the shows are visible to buyers, now they can book tickets for any show they want to.
+To book tickets we need to invoke `book_tickets` function which takes only 1 argument of JSON Object.
+Sample :- {"showId":"value1","numberOfTickets":"value2"}
+In response the buyer gets the ticket details along with amenities like Water Bottle and Pop Corn.
+Later buyer can exchange water bottle with soda if required.
+
+# Step 5 :
+## Exchange Water
+Post booking of ticket by buyer can exchange water with soda, but only 200 customers will only be 
+able to avail this offer per day. 
+To exchange water with soda we need to invoke `book_tickets` function which takes only 1 argument of JSON Object.
+Sample :- {"ticketId":"value1"}
+
 ```

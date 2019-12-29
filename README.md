@@ -3,7 +3,7 @@ An application that can be used to book movie tickets and record each transactio
 ```sh
 # Step 1 :
 ## Add Theatre
-This is the first step inorder to run MTA. 
+Here multiple theatres can be added where unique ID is theatreRegNo.
 To add theatre we need to invoke `add_theatre` function which takes 
 only 1 argument of JSON Object.
 Sample :- {"theatreRegNo":"value1","theatreLocation":"value2","theatreName":"value3","numberOfScreens":"value4","docType":"value5"}

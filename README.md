@@ -40,7 +40,9 @@ able to avail this offer per day.
 To exchange water with soda we need to invoke `book_tickets` function which takes only 1 argument of JSON Object.
 Sample :- {"ticketId":"value1"}
 
-# Note: This application is built on CouchDB as primary database for hyperledger fabric as we can use rich queries to fetch the details as required. Below mentioned functions are already available in this application.
+# Note: This application is built on CouchDB as primary database for hyperledger fabric as we can use 
+# rich queries to fetch the details as required. Below mentioned functions are already available in 
+# this application.
 
 # Query 1 :
 ## Generic Query

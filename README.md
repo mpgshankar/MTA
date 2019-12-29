@@ -2,7 +2,7 @@
 An application that can be used to book movie tickets and record each transaction over the blockchain ledger.
 ```sh
 # Step 1 :
-## Onboard Theatre
+## Add Theatre
 This is the first step inorder to run MTA. 
 To onboard theatre we need to invoke `add_theatre` function which takes 
 only 1 argument of JSON Object.

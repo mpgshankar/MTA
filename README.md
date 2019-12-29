@@ -40,4 +40,19 @@ able to avail this offer per day.
 To exchange water with soda we need to invoke `book_tickets` function which takes only 1 argument of JSON Object.
 Sample :- {"ticketId":"value1"}
 
+# Note: This application is built on CouchDB as primary database for hyperledger fabric as we can use rich queries to fetch the details as required. Below mentioned functions are already available in this application.
+
+# Query 1 :
+## Generic Query
+This takes query input from user and gives all the desired output.
+To use this we need to call `generic_query` function. 
+Sample for passing query :- {"selector":{"docType":"Shows", "showTiming":"value"}}
+
+# Query 2 :
+## Generic Query with pagination
+This takes query input from user along with page size and gives the desired output as a pagination result.
+To use this we need to call `generic_query_pagination` function. 
+Sample for passing query :- [{"selector":{"docType":"Shows", "showTiming":"value"}},10,""]
+
+
 ```

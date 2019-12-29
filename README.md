@@ -14,5 +14,12 @@ Once the theatre is onboarded movie can be added into that Theatre.
 Adding movies will be done using credentials of Theatre. 
 To add movies we need to invoke `add_movies` function which takes only 1 argument of JSON Object.
 Sample :- {"movieId":"value1","movieName":"value2","docType":"value3"}
-Here movieId can be any unique Id to distinguish Movies
+Here movieId can be any unique Id to distinguish between Movies
+
+# Step 3 :
+## Add Shows
+Once the movie has been added for a Theatre. Theatre user can add shows using their credentials. 
+To add shows we need to invoke `add_shows` function which takes only 1 argument of JSON Object.
+Sample :- {"showId":"value1","showTiming":"value2", "movieId":"value3","docType":"value4"}
+Here showId can be any unique Id to distinguish between Shows for Movies
 ```
